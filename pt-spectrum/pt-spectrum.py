@@ -1,5 +1,6 @@
 #
-#	Draw pT spectrum for the sum of leading jet from trijet (j1)
+#	Draw pT spectrum for the sum of leading jet from gamma+2jet and leading
+#	jet from trijet.
 #
 ###############################################################################
 
@@ -16,13 +17,23 @@ def myText(x,y,text,color=1):
 bin = [0,50,100,150,200,300,400,500,600,800,1000,1200,1500,2000]
 
 f = TFile("../root-files/trijet_sherpa_clean.root")
+f2 = TFile("../root-files/gamma2jet_sherpa_clean.root")
 
-pt_0_q = f.Get("400_j1_Forward_Quark_pt")
-pt_0_g = f.Get("400_j1_Forward_Gluon_pt")
-pt_0_o = f.Get("400_j1_Forward_Other_pt")
+pt_0_q = f2.Get("0_LeadingJet_Forward_Quark_pt")
+pt_0_g = f2.Get("0_LeadingJet_Forward_Gluon_pt")
+pt_0_o = f2.Get("0_LeadingJet_Forward_Other_pt")
 
 pt_0_q.Add(pt_0_g)
 pt_0_q.Add(pt_0_o)
+
+for i in range (1,13):
+	pt_q = f2.Get(str(bin[i])+"_LeadingJet_Forward_Quark_pt")
+	pt_g = f2.Get(str(bin[i])+"_LeadingJet_Forward_Gluon_pt")
+	pt_o = f2.Get(str(bin[i])+"_LeadingJet_Forward_Other_pt")
+
+	pt_0_q.Add(pt_q)
+	pt_0_q.Add(pt_g)
+	pt_0_q.Add(pt_o)
 
 for i in range (7,13):
 	print(str(bin[i]))
@@ -48,4 +59,4 @@ myText(0.48,0.80,'#bf{#scale[1.2]{#sqrt{s}=13 TeV}}')
 myText(0.48,0.76,'#bf{#scale[1.2]{Anti-K_{t} EM+JES R=0.4}}')
 myText(0.48,0.72,'#bf{#scale[1.2]{Leading Jet p_{T} Spectrum, Sherpa}}')
 
-c.Print("trijet-pt-sherpa.pdf")
+c.Print("pt-sherpa.pdf")
