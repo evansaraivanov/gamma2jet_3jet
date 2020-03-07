@@ -1,3 +1,8 @@
+#
+#	Draw pT spectrum for the sum of leading jet from gamma+2jet
+#
+###############################################################################
+
 from ROOT import *
 
 def myText(x,y,text,color=1):
