@@ -56,12 +56,12 @@ for i in range(0,13):
 		trijet_quark2 = file2.Get(str(bin[i])+"_j3_Forward_Quark_"+var)
 		trijet_gluon2 = file2.Get(str(bin[i])+"_j3_Forward_Gluon_"+var)
 		trijet_quark.Add(trijet_quark2)
-		gamma_quark.Add(gamma_quark1)
+		trijet_gluon.Add(trijet_gluon2)
 
+	gamma_quark.Add(gamma_quark1)
 	gamma_gluon.Add(gamma_gluon1)
-	trijet_gluon.Add(trijet_gluon2)
 
-	tq1 = 0.  #1 refers to gamma eta jet, 2 refers to trijet eta
+	tq1 = 0.  #1 refers to gamma+2jet, 2 refers to trijet
 	tg1 = 0.
 	tq2 = 0.
 	tg2 = 0.

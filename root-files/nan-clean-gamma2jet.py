@@ -42,14 +42,14 @@ for i in bins:
 			if math.isnan(d) == True : qs.SetBinContent(k,0)
 			if math.isnan(e) == True : gs.SetBinContent(k,0)
 			if math.isnan(f) == True : os.SetBinContent(k,0)
-
+			'''
 			if a < 0 : ql.SetBinContent(k,np.abs(a))
 			if b < 0 : gl.SetBinContent(k,np.abs(b))
 			if c < 0 : ol.SetBinContent(k,np.abs(c))
 			if d < 0 : qs.SetBinContent(k,np.abs(d))
 			if e < 0 : gs.SetBinContent(k,np.abs(e))
 			if f < 0 : os.SetBinContent(k,np.abs(f))
-
+			'''
 		ql.Write()
 		gl.Write()
 		ol.Write()
