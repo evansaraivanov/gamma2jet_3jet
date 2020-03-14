@@ -14,32 +14,21 @@ def myText(x,y,text,color=1):
     l.DrawLatex(x,y,text)
     pass
 
-bin = [0,50,100,150,200,300,400,500,600,800,1000,1200,1500,2000]
+bin = [500,600,800,1000,1200,1500]
 
-f = TFile("../root-files/trijet_sherpa_clean.root")
-f2 = TFile("../root-files/gamma2jet_sherpa_clean.root")
+f2 = TFile("../root-files/trijet-sherpa-py-nancheck.root")
 
-pt_0_q = f2.Get("0_LeadingJet_Forward_Quark_pt")
-pt_0_g = f2.Get("0_LeadingJet_Forward_Gluon_pt")
-pt_0_o = f2.Get("0_LeadingJet_Forward_Other_pt")
+pt_0_q = f2.Get("400_j1_Central_Quark_pt")
+pt_0_g = f2.Get("400_j1_Central_Gluon_pt")
+pt_0_o = f2.Get("400_j1_Central_Other_pt")
 
 pt_0_q.Add(pt_0_g)
 pt_0_q.Add(pt_0_o)
 
-for i in range (1,13):
-	pt_q = f2.Get(str(bin[i])+"_LeadingJet_Forward_Quark_pt")
-	pt_g = f2.Get(str(bin[i])+"_LeadingJet_Forward_Gluon_pt")
-	pt_o = f2.Get(str(bin[i])+"_LeadingJet_Forward_Other_pt")
-
-	pt_0_q.Add(pt_q)
-	pt_0_q.Add(pt_g)
-	pt_0_q.Add(pt_o)
-
-for i in range (7,13):
-	print(str(bin[i]))
-	pt_q = f.Get(str(bin[i])+"_j1_Forward_Quark_pt")
-	pt_g = f.Get(str(bin[i])+"_j1_Forward_Gluon_pt")
-	pt_o = f.Get(str(bin[i])+"_j1_Forward_Other_pt")
+for i in bin:
+	pt_q = f2.Get(str(i)+"_j1_Central_Quark_pt")
+	pt_g = f2.Get(str(i)+"_j1_Central_Gluon_pt")
+	pt_o = f2.Get(str(i)+"_j1_Central_Other_pt")
 
 	pt_0_q.Add(pt_q)
 	pt_0_q.Add(pt_g)
@@ -59,4 +48,4 @@ myText(0.48,0.80,'#bf{#scale[1.2]{#sqrt{s}=13 TeV}}')
 myText(0.48,0.76,'#bf{#scale[1.2]{Anti-K_{t} EM+JES R=0.4}}')
 myText(0.48,0.72,'#bf{#scale[1.2]{Leading Jet p_{T} Spectrum, Sherpa}}')
 
-c.Print("pt-sherpa.pdf")
+c.Print("pt-sherpa-trijet.pdf")
