@@ -23,16 +23,16 @@ void drawPTspectrum_pythia_e() {
 
 	TCanvas *c1 = new TCanvas("c1","c1",500,500);
 
-	TH1 *hj0 = new TH1D("hj0","",60,0,2000);
-	TH1 *hj1 = new TH1D("hj1","",60,0,2000);
-	TH1 *hj2 = new TH1D("hj2","",60,0,2000);
-	TH1 *hj3 = new TH1D("hj3","",60,0,2000);
-	TH1 *hj4 = new TH1D("hj4","",60,0,2000);
-	TH1 *hj5 = new TH1D("hj5","",60,0,2000);
-	TH1 *hj6 = new TH1D("hj6","",60,0,2000);
-	TH1 *hj7 = new TH1D("hj7","",60,0,2000);
-	TH1 *hj8 = new TH1D("hj8","",60,0,2000);
-	TH1 *hj9 = new TH1D("hj9","",60,0,2000);
+	TH1 *hj0 = new TH1D("hj0","",60,0,3000);
+	TH1 *hj1 = new TH1D("hj1","",60,0,3000);
+	TH1 *hj2 = new TH1D("hj2","",60,0,3000);
+	TH1 *hj3 = new TH1D("hj3","",60,0,3000);
+	TH1 *hj4 = new TH1D("hj4","",60,0,3000);
+	TH1 *hj5 = new TH1D("hj5","",60,0,3000);
+	TH1 *hj6 = new TH1D("hj6","",60,0,3000);
+	TH1 *hj7 = new TH1D("hj7","",60,0,3000);
+	TH1 *hj8 = new TH1D("hj8","",60,0,3000);
+	TH1 *hj9 = new TH1D("hj9","",60,0,3000);
 
 	histmap[0] = hj0;
 	histmap[1] = hj1;
@@ -101,15 +101,14 @@ void drawPTspectrum_pythia_e() {
 		mc_weight = h->GetBinContent(1);
 
 		entries = t1->GetEntries();
-		mc_weight = mc_weight * entries;
 
 		for (int i=0; i<entries; ++i) {
 			t1->GetEvent(i);
 //			cout << pass_HLT_j400 << "  ;  " << j1_pT << " ; " << abs(j1_eta) << " ; " << abs(j2_eta) << " ; " << abs(j1_eta)/abs(j2_eta) << endl;
-			if(pass_HLT_j400 == 1 && j1_pT > 500 && j1_pT < 2000) { // abs(j1_eta) < 2.1 && abs(j2_eta) < 2.1 &&  abs(j1_eta)/abs(j2_eta) <  1.5) {
-				w = weight * mc_weight;
-				cout << w << " ; " << "Filling Histogram..." << endl;
-				TH1 *hist = histmap.find(mc_mod)->second;
+			if(j1_pT > 0 && j1_pT < 3000) { // abs(j1_eta) < 2.1 && abs(j2_eta) < 2.1 &&  abs(j1_eta)/abs(j2_eta) <  1.5) {
+		    	w = weight * mc_weight;
+	    		cout << w << " ; " << "Filling Histogram..." << endl;
+    			TH1 *hist = histmap.find(mc_mod)->second;
 //				cout << j1_pT << endl;
 				hist->Fill(j1_pT,w);
 			}
