@@ -4,9 +4,9 @@ import numpy as np
 
 doreweight = 0   #decide if we want to do the reweighting process
 
-var = "ntrk"  #change the var name according to the inputvar you want to read
+var = "bdt"  #change the var name according to the inputvar you want to read
 mc = "sherpa_SF"   #by setting it as "SF" or "MC", it will automatically making scale factor plots or MC closure plots
-inputvar = "ntrk"  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
+inputvar = "bdt"  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
 
 def myText(x,y,text, color = 1):
 	l = TLatex()
@@ -265,17 +265,19 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			forward_data_strap = h_data.Clone("f"+str(k))
 			central_data_strap = l_data.Clone("c"+str(k))
 
-		for j in range(1,higher.GetNbinsX()+1):
-			forward_data_strap.SetBinContent(j,np.random.poisson(h_data.GetBinContent(j)))
-			central_data_strap.SetBinContent(j,np.random.poisson(l_data.GetBinContent(j)))
-		for j in range(0,higher.GetNbinsX()):
-			F = forward_data_strap.GetBinContent(j)
-			C = central_data_strap.GetBinContent(j)
-			Q = -(C*fg-F*cg)/(cg*fq-fg*cq)
-			G = (C*fq-F*cq)/(cg*fq-fg*cq)
+			for j in range(1,higher.GetNbinsX()+1):
+				forward_data_strap.SetBinContent(j,np.random.poisson(h_data.GetBinContent(j)))
+				central_data_strap.SetBinContent(j,np.random.poisson(l_data.GetBinContent(j)))
 
-			Qvals[j][k] = Q
-			Gvals[j][k] = G
+
+			for j in range(0,higher.GetNbinsX()):
+				F = forward_data_strap.GetBinContent(j)
+				C = central_data_strap.GetBinContent(j)
+				Q = -(C*fg-F*cg)/(cg*fq-fg*cq)
+				G = (C*fq-F*cq)/(cg*fq-fg*cq)
+
+				Qvals[j][k] = Q
+				Gvals[j][k] = G
 
 		#compute the uncertainty and plots
 		quark_strap = quark_data.Clone("")
@@ -287,6 +289,8 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			Q = np.median(Qvals[j])
 			G = np.median(Gvals[j])
 
+			#print(Q,Qvals[j][int(.84*len(Qvals[j]))],Qvals[j][int(.16*len(Qvals[j]))])
+
 			sigmaQ = .5*(Qvals[j][int(.84*len(Qvals[j]))] - Qvals[j][int(.16*len(Qvals[j]))])
 			sigmaG = .5*(Gvals[j][int(.84*len(Gvals[j]))] - Gvals[j][int(.16*len(Gvals[j]))])
 
@@ -297,8 +301,6 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 
 			sigma_tot_q[j-1][0] = sigmaQ
 			sigma_tot_g[j-1][0] = sigmaG
-
-			print(sigmaQ)
 
 			quark_strap.SetBinContent(j,sigmaQ)
 			gluon_strap.SetBinContent(j,sigmaG)

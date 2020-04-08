@@ -4,9 +4,9 @@ from ROOT import *
 
 doreweight = 0   #decide if we want to do the reweighting process
 
-var = "ntrk"  #change the var name according to the inputvar you want to read
-mc = "sherpa_MC"   #by setting it as "SF" or "MC", it will automatically making scale factor plots or MC closure plots
-inputvar = "ntrk"  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
+var = "bdt"  #change the var name according to the inputvar you want to read
+mc = "sherpa_SF"   #by setting it as "SF" or "MC", it will automatically making scale factor plots or MC closure plots
+inputvar = "bdt"  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
 
 def myText(x,y,text, color = 1):
 	l = TLatex()
