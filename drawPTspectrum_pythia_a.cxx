@@ -19,9 +19,12 @@
 using namespace std;
 
 void drawPTspectrum_pythia_a() {
-    vector<float> jzslice = {0,0,0,0,0,0,0,0,0,0,0,0};
+    vector<float> jzslice = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 	map<int, TH1*> histmap;
 	map<int, TH1*>::iterator it = histmap.begin();
+	
+    vector<float> xsec = {78100000000.0,78100000000.0,2430000000.0,26500000.0,255000.0,4550.0,258.0,16.2,0.625,0.0196,0.0012,0.0000423,0.00000104};
+    vector<float> eff = {0.97536,0.024447,0.0098699,0.011663,0.013369,0.014529,0.0094734,0.011099,0.010156,0.012057,0.005894,0.0026734,0.00042898};
 
 	TCanvas *c1 = new TCanvas("c1","c1",500,500);
 
@@ -54,7 +57,6 @@ void drawPTspectrum_pythia_a() {
 	histmap[12] = hj12;
     
 	string root_lists = "/eos/user/e/esaraiva/dijet-pythia/dijet_pythia_a.txt";
-	//string root_lists = "/eos/user/w/wasu/AQT_dijet_data_bdt/dijet_data_bdt.txt";
 	string sLine="";
 	ifstream infile;
 	infile.open(root_lists.c_str());//Data());
@@ -66,7 +68,6 @@ void drawPTspectrum_pythia_a() {
 	while(getline(infile,sLine))  {
 	    k = k + 1;
 	    cout << sLine << endl;
-		//getline(infile,sLine);
 
 		TFile f2(sLine.c_str());
 
@@ -90,6 +91,11 @@ void drawPTspectrum_pythia_a() {
         
 		mc_mod = mcChannelNumber % 10;
 		jz = mcChannelNumber % 100;
+		if(jz > 12) {
+		    jz = jz - 10;
+		}
+		cout << mc_mod << jz << endl;
+		
 		TString mod = Form("AntiKt4EMPFlow_J%d_sumOfWeights",mc_mod);
 		TH1 *h = (TH1F*)f2.Get(mod);
 		mc_weight = h->GetBinContent(1);
@@ -103,7 +109,7 @@ void drawPTspectrum_pythia_a() {
 	
     infile.clear();
     infile.seekg(0, ios::beg);
-	
+
     while(getline(infile,sLine))  {
         cout << sLine << endl;
 		TFile f2(sLine.c_str());
@@ -144,16 +150,26 @@ void drawPTspectrum_pythia_a() {
 		float w;
 		int entries;
 		int jz;
+		float efficiency;
+		float xsection;
 
         jz = mcChannelNumber % 100;
+        
+        if(jz > 12) {
+            jz = jz-10;
+        }
         float jz_weight;
+        
+        jz_weight = jzslice.at(jz);
+        efficiency = eff.at(jz);
+        xsection = xsec.at(jz);
+        
 
 		for (int i=0; i<entries; ++i) {
 			t1->GetEvent(i);
-			if(pass_HLT_j400 == 1 && j1_pT > 500 && j1_pT < 2000) { // abs(j1_eta) < 2.1 && abs(j2_eta) < 2.1 &&  abs(j1_eta)/abs(j2_eta) <  1.5) {
-			    jz_weight = jzslice[jz];
-				w = weight * pdfWeights[0] * jz_weight;
-				cout << w << " ; " << "Filling Histogram..." << endl;
+			if(j1_pT > 0 && j1_pT < 3000) { // abs(j1_eta) < 2.1 && abs(j2_eta) < 2.1 &&  abs(j1_eta)/abs(j2_eta) <  1.5) {
+				w = weight * efficiency * xsection / jz_weight;
+//				cout << w << " ; " << "Filling Histogram..." << endl;
 				TH1 *hist = histmap.find(jz)->second;
 				hist->Fill(j1_pT,w);
 			}

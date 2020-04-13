@@ -20,6 +20,9 @@ using namespace std;
 void drawPTspectrum_pythia_e() {
 	map<int, TH1*> histmap;
 	map<int, TH1*>::iterator it = histmap.begin();
+	
+    vector<float> xsec = {780500000000.0,780500000000.0,24330000000.0,26450000.0,254610.0,4553.0,257.540,16.215,0.625060,0.019639,0.001196,0.00004263,0.000001037};
+    vector<float> eff = {0.97536,0.024447,0.0098699,0.011663,0.013369,0.014529,0.0094734,0.011099,0.010156,0.012057,0.005894,0.0026734,0.00042898};
 
 	TCanvas *c1 = new TCanvas("c1","c1",500,500);
 
@@ -33,6 +36,9 @@ void drawPTspectrum_pythia_e() {
 	TH1 *hj7 = new TH1D("hj7","",60,0,3000);
 	TH1 *hj8 = new TH1D("hj8","",60,0,3000);
 	TH1 *hj9 = new TH1D("hj9","",60,0,3000);
+	TH1 *hj10 = new TH1D("hj10","",60,0,3000);
+	TH1 *hj11 = new TH1D("hj11","",60,0,3000);
+	TH1 *hj12 = new TH1D("hj12","",60,0,3000);
 
 	histmap[0] = hj0;
 	histmap[1] = hj1;
@@ -44,11 +50,11 @@ void drawPTspectrum_pythia_e() {
 	histmap[7] = hj7;
 	histmap[8] = hj8;
 	histmap[9] = hj9;
-
-	cout << histmap[0] << endl;
+	histmap[10] = hj10;
+	histmap[11] = hj11;
+	histmap[12] = hj12;
 
 	string root_lists = "/eos/user/e/esaraiva/dijet-pythia/dijet_pythia_e.txt";
-	//string root_lists = "/eos/user/w/wasu/AQT_dijet_data_bdt/dijet_data_bdt.txt";
 	string sLine="";
 	ifstream infile;
 	infile.open(root_lists.c_str());//Data());
@@ -88,28 +94,42 @@ void drawPTspectrum_pythia_e() {
 		t1->SetBranchAddress("weight_pileup",&weight_pileup);
 		t1->SetBranchAddress("weight",&weight);
 		t1->SetBranchAddress("pdfWeights",&pdfWeights);
+		
+		t1->GetEntry(1);
 
 		float mc_weight;
-		int mc_mod;
+		int mc_mod = 0;
 		float w;
 		int entries;
+		float efficiency;
+		float xsection;
+		int index;
+		
+		cout << mcChannelNumber << endl;
 
 		mc_mod = mcChannelNumber % 10;
+		index = (mcChannelNumber % 100);
+		if(index > 12) {
+		    index = 0;
+		}
+		cout << index << endl;
+		
 		cout << mc_mod << endl << endl;
 		TString mod = Form("AntiKt4EMPFlow_J%d_sumOfWeights",mc_mod);
 		TH1 *h = (TH1F*)f2.Get(mod);
 		mc_weight = h->GetBinContent(1);
+		xsection = xsec.at(index);
+		efficiency = eff.at(index);
 
 		entries = t1->GetEntries();
+		
 
 		for (int i=0; i<entries; ++i) {
 			t1->GetEvent(i);
-//			cout << pass_HLT_j400 << "  ;  " << j1_pT << " ; " << abs(j1_eta) << " ; " << abs(j2_eta) << " ; " << abs(j1_eta)/abs(j2_eta) << endl;
 			if(j1_pT > 0 && j1_pT < 3000) { // abs(j1_eta) < 2.1 && abs(j2_eta) < 2.1 &&  abs(j1_eta)/abs(j2_eta) <  1.5) {
-		    	w = weight * mc_weight;
-	    		cout << w << " ; " << "Filling Histogram..." << endl;
+		    	w = weight * efficiency * xsection / mc_weight;
+	    		cout << weight << " , " << efficiency << " , " << xsection << " , " << mc_weight << " , " << w << " ; " << "Filling Histogram..." << endl;
     			TH1 *hist = histmap.find(mc_mod)->second;
-//				cout << j1_pT << endl;
 				hist->Fill(j1_pT,w);
 			}
 		}
