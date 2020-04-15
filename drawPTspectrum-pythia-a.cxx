@@ -17,11 +17,11 @@
 #include <map>
 using namespace std;
 
-void drawPTspectrum_pythia_d() {
+void drawPTspectrum_pythia_a() {
 	map<int, TH1*> histmap;
 	map<int, TH1*>::iterator it = histmap.begin();
 	
-    vector<float> xsec = {78100000000.0,78100000000.0,2430000000.0,26500000.0,255000.0,4550.0,258.0,16.2,0.625,0.0196,0.00120,0.0000423,0.00000104};
+    vector<float> xsec = {78100000000.0,78100000000.0,2430000000.0,26500000.0,255000.0,4550.0,258.0,16.2,0.625,0.0196,0.0012,0.0000423,0.00000104};
     vector<float> eff = {0.97536,0.024447,0.0098699,0.011663,0.013369,0.014529,0.0094734,0.011099,0.010156,0.012057,0.005894,0.0026734,0.00042898};
 
 	TCanvas *c1 = new TCanvas("c1","c1",500,500);
@@ -54,7 +54,7 @@ void drawPTspectrum_pythia_d() {
 	histmap[11] = hj11;
 	histmap[12] = hj12;
 
-	string root_lists = "/eos/user/e/esaraiva/dijet-pythia/dijet_pythia_e.txt";
+	string root_lists = "/eos/user/e/esaraiva/dijet-pythia/dijet_pythia_a.txt";
 	string sLine="";
 	ifstream infile;
 	infile.open(root_lists.c_str());//Data());
@@ -135,7 +135,7 @@ void drawPTspectrum_pythia_d() {
 		}
 	}
 
-	TFile fout("dijet-pythia-d-pt.root","recreate");
+	TFile fout("dijet-pythia-a-pt.root","recreate");
 	fout.cd();
 
 	for(it = histmap.begin();it != histmap.end();it++) {

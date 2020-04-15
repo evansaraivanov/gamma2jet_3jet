@@ -128,8 +128,8 @@ void drawPTspectrum_pythia_e() {
 			t1->GetEvent(i);
 			if(j1_pT > 0 && j1_pT < 3000) { // abs(j1_eta) < 2.1 && abs(j2_eta) < 2.1 &&  abs(j1_eta)/abs(j2_eta) <  1.5) {
 		    	w = weight * efficiency * xsection / mc_weight;
-	    		cout << weight << " , " << efficiency << " , " << xsection << " , " << mc_weight << " , " << w << " ; " << "Filling Histogram..." << endl;
-    			TH1 *hist = histmap.find(mc_mod)->second;
+	    		cout << weight << " , " << pdfWeights[0] << " , " << efficiency << " , " << xsection << " , " << mc_weight << " , " << w << " ; " << "Filling Histogram..." << endl;
+    			TH1 *hist = histmap.find(index)->second;
 				hist->Fill(j1_pT,w);
 			}
 		}
