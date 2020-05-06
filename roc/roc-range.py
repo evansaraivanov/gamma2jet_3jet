@@ -1,8 +1,8 @@
 from ROOT import *
 import numpy as np
 
-var1 = "ntrk" #name of variable as shown in .root file
-VAR1 = "n_{Track}" #this is how the variable will be displayed on the graph using LATEX
+var1 = "bdt" #name of variable as shown in .root file
+VAR1 = "BDT" #this is how the variable will be displayed on the graph using LATEX
 
 sample = ["gamma","trijet"]
 higherGraph = []

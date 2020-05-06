@@ -12,7 +12,7 @@ def myText(x,y,text,color=1):
 var = "ntrk"
 
 file1 = TFile("../root-files/gamma2jet_sherpa_clean.root")
-file2 = TFile("../root-files/trijet_sherpa_clean.root")
+file2 = TFile("../root-files/trijet-sherpa-py.root")
 
 bin = np.array([0.,50.,100.,150.,200.,300.,400.,500.,600.,800.,1000.,1200.,1500.,2000.])
 bin2 = np.array([0.0,0.5,1.0,2.1])
@@ -38,28 +38,56 @@ fq1_list = np.zeros(12) #these will hold fq values for different pt ranges
 fq2_list = np.zeros(12)
 
 for i in range(0,13):
+	print(bin[i])
+
 	gamma_quark = file1.Get(str(bin[i])+"_SubJet_Forward_Quark_"+var)
 	gamma_gluon = file1.Get(str(bin[i])+"_SubJet_Forward_Gluon_"+var)
 	gamma_quark1 = file1.Get(str(bin[i])+"_LeadingJet_Forward_Quark_"+var)
 	gamma_gluon1 = file1.Get(str(bin[i])+"_LeadingJet_Forward_Gluon_"+var)
 
-	trijet_quark = file2.Get(str(bin[i])+"_j2_Forward_Quark_"+var)
-	trijet_gluon = file2.Get(str(bin[i])+"_j2_Forward_Gluon_"+var)
+	gamma_quark.Add(gamma_quark1)
+	gamma_gluon.Add(gamma_gluon1)
 
-	if bin[i] >= 400:
-		trijet_quark1 = file2.Get(str(bin[i])+"_j1_Forward_Quark_"+var)
-		trijet_gluon1 = file2.Get(str(bin[i])+"_j1_Forward_Gluon_"+var)
-		trijet_quark.Add(trijet_quark1)
-		trijet_gluon.Add(trijet_gluon1)
 
-	if bin[i] < 1000:
-		trijet_quark2 = file2.Get(str(bin[i])+"_j3_Forward_Quark_"+var)
-		trijet_gluon2 = file2.Get(str(bin[i])+"_j3_Forward_Gluon_"+var)
+	if(bin[i] < 200):
+		trijet_quark = file2.Get(str(bin[i])+"_j3_Central_Quark_"+var)
+		trijet_gluon = file2.Get(str(bin[i])+"_j3_Central_Gluon_"+var)
+
+	if(bin[i] >= 200 and min < 400):
+		trijet_quark = file2.Get(str(bin[i])+"_j2_Central_Quark_"+var)
+		trijet_gluon = file2.Get(str(bin[i])+"_j2_Central_Gluon_"+var)
+
+		trijet_quark3 = file2.Get(str(bin[i])+"_j3_Central_Quark_"+var)
+		trijet_gluon3 = file2.Get(str(bin[i])+"_j3_Central_Gluon_"+var)
+
+		trijet_quark.Add(trijet_quark3)
+		trijet_gluon.Add(trijet_gluon3)
+
+	if(bin[i] >= 400 and min < 1000):
+		trijet_quark = file2.Get(str(bin[i])+"_j2_Central_Quark_"+var)
+		trijet_gluon = file2.Get(str(bin[i])+"_j2_Central_Gluon_"+var)
+
+		trijet_quark2 = file2.Get(str(bin[i])+"_j1_Central_Quark_"+var)
+		trijet_gluon2 = file2.Get(str(bin[i])+"_j1_Central_Gluon_"+var)
+
+		trijet_quark3 = file2.Get(str(bin[i])+"_j3_Central_Quark_"+var)
+		trijet_gluon3 = file2.Get(str(bin[i])+"_j3_Central_Gluon_"+var)
+
 		trijet_quark.Add(trijet_quark2)
 		trijet_gluon.Add(trijet_gluon2)
 
-	gamma_quark.Add(gamma_quark1)
-	gamma_gluon.Add(gamma_gluon1)
+		trijet_quark.Add(trijet_quark3)
+		trijet_gluon.Add(trijet_gluon3)
+
+	if(bin[i] >= 1000):
+		trijet_quark = file2.Get(str(bin[i])+"_j2_Central_Quark_"+var)
+		trijet_gluon = file2.Get(str(bin[i])+"_j2_Central_Gluon_"+var)
+
+		trijet_quark2 = file2.Get(str(bin[i])+"_j1_Central_Quark_"+var)
+		trijet_gluon2 = file2.Get(str(bin[i])+"_j1_Central_Gluon_"+var)
+
+		trijet_quark.Add(trijet_quark2)
+		trijet_gluon.Add(trijet_gluon2)
 
 	tq1 = 0.  #1 refers to gamma+2jet, 2 refers to trijet
 	tg1 = 0.
