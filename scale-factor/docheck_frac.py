@@ -5,7 +5,7 @@ from ROOT import *
 doreweight = 0   #decide if we want to do the reweighting process
 
 var = "bdt"  #change the var name according to the inputvar you want to read
-mc = "sherpa_SF"   #by setting it as "SF" or "MC", it will automatically making scale factor plots or MC closure plots
+mc = "sherpa_MC"   #by setting it as "SF" or "MC", it will automatically making scale factor plots or MC closure plots
 inputvar = "bdt"  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
 
 def myText(x,y,text, color = 1):
@@ -25,8 +25,10 @@ ntrackall4 = TFile("../root-files/trijet-data-py-nancheck.root")
 
 for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 #for i in range(13):	#for gamma+jet combined with dijet event, start from jet pT>0 GeV
+
 		min = bin[i]
 		max = bin[i+1]
+		print(min)
 
 		higher_quark = ntrackall.Get(str(min)+"_LeadingJet_Forward_Quark_"+inputvar)
 		higher_gluon = ntrackall.Get(str(min)+"_LeadingJet_Forward_Gluon_"+inputvar)
@@ -39,20 +41,16 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 		higher_gluon.Add(higher_gluon2)
 		higher_data.Add(higher_data2)
 
-		lower_quark = ntrackall1.Get(str(min)+"_j2_Central_Quark_"+inputvar)
-		lower_gluon = ntrackall1.Get(str(min)+"_j2_Central_Gluon_"+inputvar)
-		lower_data = ntrackall4.Get(str(min)+"_j2_Central_Data_"+inputvar)
+		if(min < 200):
+			lower_quark = ntrackall1.Get(str(min)+"_j3_Central_Quark_"+inputvar)
+			lower_gluon = ntrackall1.Get(str(min)+"_j3_Central_Gluon_"+inputvar)
+			lower_data = ntrackall4.Get(str(min)+"_j3_Central_Data_"+inputvar)
 
-		if(min >= 400):
-			lower_quark2 = ntrackall1.Get(str(min)+"_j1_Central_Quark_"+inputvar)
-			lower_gluon2 = ntrackall1.Get(str(min)+"_j1_Central_Gluon_"+inputvar)
-			lower_data2 = ntrackall4.Get(str(min)+"_j1_Central_Data_"+inputvar)
+		if(min >= 200 and min < 400):
+			lower_quark = ntrackall1.Get(str(min)+"_j2_Central_Quark_"+inputvar)
+			lower_gluon = ntrackall1.Get(str(min)+"_j2_Central_Gluon_"+inputvar)
+			lower_data = ntrackall4.Get(str(min)+"_j2_Central_Data_"+inputvar)
 
-			lower_quark.Add(lower_quark2)
-			lower_gluon.Add(lower_gluon2)
-			lower_data.Add(lower_data2)
-
-		if(min < 1000):
 			lower_quark3 = ntrackall1.Get(str(min)+"_j3_Central_Quark_"+inputvar)
 			lower_gluon3 = ntrackall1.Get(str(min)+"_j3_Central_Gluon_"+inputvar)
 			lower_data3 = ntrackall4.Get(str(min)+"_j3_Central_Data_"+inputvar)
@@ -60,6 +58,41 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			lower_quark.Add(lower_quark3)
 			lower_gluon.Add(lower_gluon3)
 			lower_data.Add(lower_data3)
+
+		if(min >= 400 and min < 1000):
+			lower_quark = ntrackall1.Get(str(min)+"_j2_Central_Quark_"+inputvar)
+			lower_gluon = ntrackall1.Get(str(min)+"_j2_Central_Gluon_"+inputvar)
+			lower_data = ntrackall4.Get(str(min)+"_j2_Central_Data_"+inputvar)
+
+			lower_quark2 = ntrackall1.Get(str(min)+"_j1_Central_Quark_"+inputvar)
+			lower_gluon2 = ntrackall1.Get(str(min)+"_j1_Central_Gluon_"+inputvar)
+			lower_data2 = ntrackall4.Get(str(min)+"_j1_Central_Data_"+inputvar)
+
+			lower_quark3 = ntrackall1.Get(str(min)+"_j3_Central_Quark_"+inputvar)
+			lower_gluon3 = ntrackall1.Get(str(min)+"_j3_Central_Gluon_"+inputvar)
+			lower_data3 = ntrackall4.Get(str(min)+"_j3_Central_Data_"+inputvar)
+
+			lower_quark.Add(lower_quark2)
+			lower_gluon.Add(lower_gluon2)
+			lower_data.Add(lower_data2)
+
+			lower_quark.Add(lower_quark3)
+			lower_gluon.Add(lower_gluon3)
+			lower_data.Add(lower_data3)
+
+		if(min >= 1000):
+			lower_quark = ntrackall1.Get(str(min)+"_j2_Central_Quark_"+inputvar)
+			lower_gluon = ntrackall1.Get(str(min)+"_j2_Central_Gluon_"+inputvar)
+			lower_data = ntrackall4.Get(str(min)+"_j2_Central_Data_"+inputvar)
+
+			lower_quark2 = ntrackall1.Get(str(min)+"_j1_Central_Quark_"+inputvar)
+			lower_gluon2 = ntrackall1.Get(str(min)+"_j1_Central_Gluon_"+inputvar)
+
+			lower_data2 = ntrackall4.Get(str(min)+"_j1_Central_Data_"+inputvar)
+
+			lower_quark.Add(lower_quark2)
+			lower_gluon.Add(lower_gluon2)
+			lower_data.Add(lower_data2)
 
 		ToT_Fq2 = 0.
 		ToT_Fg2 = 0.
