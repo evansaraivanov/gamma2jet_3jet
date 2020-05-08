@@ -11,8 +11,15 @@ def myText(x,y,text,color=1):
 
 var = "ntrk"
 
-file1 = TFile("../root-files/gamma2jet_sherpa_clean.root")
-file2 = TFile("../root-files/trijet-sherpa-py.root")
+#sherpa
+#file1 = TFile("../root-files/gamma2jet_sherpa_clean.root")
+#file2 = TFile("../root-files/trijet-sherpa-py.root")
+
+#pythia
+file1 = TFile("../root-files/gamma2jet_pythia_py.root")
+file2 = TFile("../root-files/trijet-pythia-py-nocut.root")
+
+print(file2)
 
 bin = np.array([0.,50.,100.,150.,200.,300.,400.,500.,600.,800.,1000.,1200.,1500.,2000.])
 bin2 = np.array([0.0,0.5,1.0,2.1])
@@ -174,7 +181,7 @@ myText(0.14,0.84,'#it{#bf{#scale[1.4]{#bf{ATLAS} Simulation Preliminary}}}')
 myText(0.14,0.80,'#bf{#scale[1.2]{#sqrt{s}=13 TeV}}')
 myText(0.14,0.76,'#bf{#scale[1.2]{Anti-K_{t} EM+JES R=0.4}}')
 
-c.Print("pt-fraction.pdf")
+c.Print("pt-fraction-pythia.pdf")
 '''
 #for eta range
 for i in range(0,3):
