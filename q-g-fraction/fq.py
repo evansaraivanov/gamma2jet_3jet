@@ -12,12 +12,12 @@ def myText(x,y,text,color=1):
 var = "ntrk"
 
 #sherpa
-#file1 = TFile("../root-files/gamma2jet_sherpa_clean.root")
-#file2 = TFile("../root-files/trijet-sherpa-py.root")
+file1 = TFile("../root-files/gamma2jet_pythia_py.root")
+file2 = TFile("../root-files/trijet-pythia-py.root")
 
 #pythia
-file1 = TFile("../root-files/gamma2jet_pythia_py.root")
-file2 = TFile("../root-files/trijet-pythia-py-nocut.root")
+#file1 = TFile("../root-files/gamma2jet_pythia_py.root")
+#file2 = TFile("../root-files/trijet-pythia-py-nocut.root")
 
 print(file2)
 
@@ -57,10 +57,14 @@ for i in range(0,13):
 
 
 	if(bin[i] < 200):
+		print("loop1")
+
 		trijet_quark = file2.Get(str(bin[i])+"_j3_Central_Quark_"+var)
 		trijet_gluon = file2.Get(str(bin[i])+"_j3_Central_Gluon_"+var)
 
-	if(bin[i] >= 200 and min < 400):
+	if(bin[i] >= 200 and bin[i] < 400):
+		print("loop2")
+
 		trijet_quark = file2.Get(str(bin[i])+"_j2_Central_Quark_"+var)
 		trijet_gluon = file2.Get(str(bin[i])+"_j2_Central_Gluon_"+var)
 
@@ -70,7 +74,9 @@ for i in range(0,13):
 		trijet_quark.Add(trijet_quark3)
 		trijet_gluon.Add(trijet_gluon3)
 
-	if(bin[i] >= 400 and min < 1000):
+	if(bin[i] >= 400 and bin[i] < 1000):
+		print("loop3")
+
 		trijet_quark = file2.Get(str(bin[i])+"_j2_Central_Quark_"+var)
 		trijet_gluon = file2.Get(str(bin[i])+"_j2_Central_Gluon_"+var)
 
@@ -87,6 +93,8 @@ for i in range(0,13):
 		trijet_gluon.Add(trijet_gluon3)
 
 	if(bin[i] >= 1000):
+		print("loop4")
+
 		trijet_quark = file2.Get(str(bin[i])+"_j2_Central_Quark_"+var)
 		trijet_gluon = file2.Get(str(bin[i])+"_j2_Central_Gluon_"+var)
 
@@ -107,6 +115,7 @@ for i in range(0,13):
 	var_g2 = 0.
 
 	for j in range(1, gamma_quark.GetNbinsX()+1):
+
 		tq1 += gamma_quark.GetBinContent(j)
 		tg1 += gamma_gluon.GetBinContent(j)
 		tq2 += trijet_quark.GetBinContent(j)
@@ -117,6 +126,8 @@ for i in range(0,13):
 		var_g1 += (gamma_gluon.GetBinError(j)*gamma_gluon.GetBinError(j))
 		var_g2 += (trijet_gluon.GetBinError(j)*trijet_gluon.GetBinError(j))
 
+	print("tq1 = "+str(tq1)+" , tg1 = "+str(tg1)+" , tq2 = "+str(tq2)+" , tg2 = "+str(tg2))
+
 	var_tot_1 = var_q1 + var_g1
 	var_tot_2 = var_q2 + var_g2
 
@@ -125,7 +136,7 @@ for i in range(0,13):
 	fg1 = tg1/(tq1+tg1)
 	fg2 = tg2/(tg2+tq2)
 
-	print(fq1,fq2)
+	print("fq1 = "+str(fq1)+" , fq2 = "+str(fq2))
 
 	var_fq1 = fq1*fq1 * ((var_tot_1 / ((tq1+tg1)*(tq1+tg1))) + (var_q1/(tq1*tq1)))
 	var_fq2 = fq2*fq2 * ((var_tot_2 / ((tq2+tg2)*(tq2+tg2))) + (var_q2/(tq2*tq2)))

@@ -4,9 +4,9 @@ import numpy as np
 
 doreweight = 0   #decide if we want to do the reweighting process
 
-var = "ntrk"  #change the var name according to the inputvar you want to read
+var = "bdt"  #change the var name according to the inputvar you want to read
 mc = "sherpa_SF"   #by setting it as "SF" or "MC", it will automatically making scale factor plots or MC closure plots
-inputvar = "ntrk"  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
+inputvar = var  #by setting it as bdt (or ntrk,width,c1..), it will read the corresponding histogram, but remember to change the TLine range according to X-axis of different variable, one can check it by browsing the histograms in root file.
 
 def myText(x,y,text, color = 1):
 	l = TLatex()
@@ -19,7 +19,7 @@ def myText(x,y,text, color = 1):
 bin = [0, 50, 100, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000]
 
 ntrackall = TFile("../root-files/gamma2jet_sherpa_py.root")
-ntrackall1 = TFile("../root-files/trijet-sherpa-py.root")
+ntrackall1 = TFile("../root-files/trijet-sherpa-py-nancheck.root")
 ntrackall2 = TFile("../root-files/gamma2jet_pythia_py.root")
 ntrackall3 = TFile("../root-files/gamma2jet_data_py_nancheck.root")
 ntrackall4 = TFile("../root-files/trijet-data-py.root")
@@ -240,7 +240,7 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			if((cg*fq-fg*cq) != 0 ):
 				Q = -(C*fg-F*cg)/(cg*fq-fg*cq)
 				G = (C*fq-F*cq)/(cg*fq-fg*cq)
-				quark.SetBinContent(i,Q)
+				quark.SetBinContent(i,Q)	#extracted sherpa
 				gluon.SetBinContent(i,G)
 				#print "   ",i,G,higher_gluon.GetBinContent(i),lower_gluon.GetBinContent(i)
 
@@ -255,7 +255,7 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			if((cg_pythia*fq_pythia-fg_pythia*cq_pythia) != 0):
 				Q = -(C*fg_pythia-F*cg_pythia)/(cg_pythia*fq_pythia-fg_pythia*cq_pythia)
 				G = (C*fq_pythia-F*cq_pythia)/(cg_pythia*fq_pythia-fg_pythia*cq_pythia)
-				quark_pythia.SetBinContent(i,Q)
+				quark_pythia.SetBinContent(i,Q)	#extracted pythia
 				gluon_pythia.SetBinContent(i,G)
 				#print "   ",i,G,higher_gluon.GetBinContent(i),lower_gluon.GetBinContent(i)
 
@@ -270,7 +270,7 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			if((cg*fq-fg*cq) != 0):
 				Q = -(C*fg-F*cg)/(cg*fq-fg*cq)
 				G = (C*fq-F*cq)/(cg*fq-fg*cq)
-				quark_data.SetBinContent(i,Q)
+				quark_data.SetBinContent(i,Q)	#extracted data
 				gluon_data.SetBinContent(i,G)
 				#print "   ",i,"  ",G,"   ",Q
 			pass
@@ -370,25 +370,31 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 		gluon_negative = gluon_negative * -1
 
 		#mc uncertainty
-		#uncertainty calculation percent difference
+		#uncertainty calculation percent difference, extracted - truth sherpa.
+		#don't want to edit the original data
 		quark_copy = quark.Clone("")
 		gluon_copy = gluon.Clone("")
 
+		#for copy below x=0
 		quarkMC_negative = quark.Clone("")
 		gluonMC_negative = gluon.Clone("")
 
+		#get denominator for percent difference
 		quark_copy.Add(higher_quark)
 		gluon_copy.Add(higher_gluon)
 
 		quark_copy.Scale(0.5)
 		gluon_copy.Scale(0.5)
 
+		#really, the majority of this cloning is to make sure I don't encounter errors with root, where editing the original copy changes anything that uses that plot
 		quark_use = quark.Clone("")
 		gluon_use = gluon.Clone("")
 
+		#difference for numerator of percent difference, this is what is plotted.
 		quark_use.Add(higher_quark,-1)
 		gluon_use.Add(lower_gluon,-1)
 
+		#loop takes the absolute value of the numerator plot
 		for j in range(1,quark.GetNbinsX()+1):
 			a = quark_use.GetBinContent(j)
 			b = gluon_use.GetBinContent(j)
@@ -396,8 +402,7 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			a = np.absolute(a)
 			b = np.absolute(b)
 
-			sigma_tot_q[j-1][1] = a
-			sigma_tot_g[j-1][1] = b
+			print(a,b)
 
 			quark_use.SetBinContent(j,a)
 			gluon_use.SetBinContent(j,b)
@@ -405,42 +410,50 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			quarkMC_negative.SetBinContent(j,-1*a)
 			gluonMC_negative.SetBinContent(j,-1*b)
 
+		#divide by denominator
 		quark_use.Divide(quark_copy)
 		gluon_use.Divide(gluon_copy)
 
 		quarkMC_negative.Divide(quark_copy)
 		gluonMC_negative.Divide(gluon_copy)
 
+		#sets up list to compute total uncertainty.
 		for j in range(0,quark.GetNbinsX()):
 			sigma_tot_q[j][1] = quark_use.GetBinContent(j+1)
 			sigma_tot_g[j][1] = gluon_use.GetBinContent(j+1)
 
         #showering uncertainty extract. sherpa - pythia
-		quark_show_copy = quark.Clone("") # Used for the denominator of percent difference
+		# Used for the denominator of percent difference
+		quark_show_copy = quark.Clone("")
 		gluon_show_copy = gluon.Clone("")
 
-		quark_show_use = quark.Clone("") # Used for the numerator of percent difference
+		#numerator of percent difference
+		quark_show_use = quark.Clone("")
 		gluon_show_use = gluon.Clone("")
 
-		quark_show_negative = quark.Clone("") # used as negative copy of percent difference
+ 		# used as negative copy of percent difference
+		quark_show_negative = quark.Clone("")
 		gluon_show_negative = quark.Clone("")
 
+		#compute the denominator
 		quark_show_copy.Add(quark_pythia)
 		gluon_show_copy.Add(gluon_pythia)
 
 		quark_show_copy.Scale(0.5)
 		gluon_show_copy.Scale(0.5)
 
+		#compute numerator
 		quark_show_use.Add(quark_pythia,-1)
 		gluon_show_use.Add(gluon_pythia,-1)
 
+		#set up absolute values for the numerators.
 		for j in range(1,quark.GetNbinsX()+1):
 			c = quark_show_use.GetBinContent(j)
 			d = gluon_show_use.GetBinContent(j)
 			e = quark_show_copy.GetBinContent(j)
 			f = gluon_show_copy.GetBinContent(j)
 
-			print(100*c,e,"  ;  ",100*d,f)
+#			print(100*c,e,"  ;  ",100*d,f)
 
 			c = np.absolute(c)
 			d = np.absolute(d)
@@ -454,12 +467,14 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 			quark_show_negative.SetBinContent(j,-1*c)
 			gluon_show_negative.SetBinContent(j,-1*d)
 
+		#compute the percent difference
 		quark_show_use.Divide(quark_show_copy)
 		gluon_show_use.Divide(gluon_show_copy)
 
 		quark_show_negative.Divide(quark_show_copy)
 		gluon_show_negative.Divide(gluon_show_copy)
 
+		#add to list in preparation to compute the total uncertainty.
 		for j in range(0,quark.GetNbinsX()):
 			sigma_tot_q[j][2] = quark_show_use.GetBinContent(j+1)
 			sigma_tot_g[j][2] = gluon_show_use.GetBinContent(j+1)
@@ -589,22 +604,24 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 		q_sigma_tot = quark.Clone("")
 		g_sigma_tot = gluon.Clone("")
 
+		#find each uncertainty, compute total using quadric sum.
 		for j in range (0, quark.GetNbinsX()):
 			a = sigma_tot_q[j][0]
 			b = sigma_tot_q[j][1]
 			c = sigma_tot_q[j][2]
 #			d = sigma_tot_q[j][3]
-			sigma_q_tot = np.sqrt((a**2)+(b**2)) #+(c**2)+(d**2))
+			sigma_q_tot = np.sqrt((a**2)+(b**2)+(c**2))#+(d**2))
 
 			a = sigma_tot_g[j][0]
 			b = sigma_tot_g[j][1]
 			c = sigma_tot_g[j][2]
 #			d = sigma_tot_g[j][3]
-			sigma_g_tot = np.sqrt((a**2)+(b**2))+(c**2)#+(d**2))
+			sigma_g_tot = np.sqrt((a**2)+(b**2)+(c**2))#+(d**2))
 
 			q_sigma_tot.SetBinContent(j+1,sigma_q_tot)
 			g_sigma_tot.SetBinContent(j+1,sigma_g_tot)
 
+		#scale everything up to percentages.
 		q_sigma_tot.Scale(100)
 		g_sigma_tot.Scale(100)
 
@@ -644,11 +661,11 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 		gPad.SetRightMargin(0.2)
 
 
-
+		#draw the plots.
 		gStyle.SetOptStat(0)
 		######################## for ratio plo
 
-		quark_strap.GetYaxis().SetRangeUser(-25,25)
+		quark_strap.GetYaxis().SetRangeUser(-50,50)
 		quark_strap.SetLineColor(2)
 		quark_strap.SetLineStyle(2)
 		#quark_strap.SetMarkerColor(8)
@@ -732,7 +749,7 @@ for i in range(0,13):   #for only dijet event, start from jet pT>500 GeV
 
 
 		gluon_strap.GetYaxis().SetTitle("Uncertainty (%)")
-		gluon_strap.GetYaxis().SetRangeUser(-25,25)
+		gluon_strap.GetYaxis().SetRangeUser(-50,50)
 
 
 		gluon_strap.SetLineColor(2)
